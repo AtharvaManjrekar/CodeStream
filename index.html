@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alex Chen - Coding Streamer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'stream-purple': '#9146ff',
+                        'stream-purple-dark': '#772ce8',
+                        'github-gray': '#21262d',
+                        'github-border': '#30363d',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.6s ease-in-out',
+                        'slide-up': 'slideUp 0.8s ease-out',
+                        'slide-in-left': 'slideInLeft 0.7s ease-out',
+                        'slide-in-right': 'slideInRight 0.7s ease-out',
+                        'bounce-slow': 'bounce 2s infinite',
+                        'pulse-slow': 'pulse 3s infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'typing': 'typing 3.5s steps(40, end), blink-caret .75s step-end infinite',
+                        'counter': 'counter 2s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(50px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        slideInLeft: {
+                            '0%': { opacity: '0', transform: 'translateX(-50px)' },
+                            '100%': { opacity: '1', transform: 'translateX(0)' }
+                        },
+                        slideInRight: {
+                            '0%': { opacity: '0', transform: 'translateX(50px)' },
+                            '100%': { opacity: '1', transform: 'translateX(0)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        glow: {
+                            '0%': { boxShadow: '0 0 5px #9146ff, 0 0 10px #9146ff, 0 0 15px #9146ff' },
+                            '100%': { boxShadow: '0 0 10px #9146ff, 0 0 20px #9146ff, 0 0 30px #9146ff' }
+                        },
+                        typing: {
+                            '0%': { width: '0' },
+                            '100%': { width: '100%' }
+                        },
+                        'blink-caret': {
+                            '0%, 50%': { borderColor: 'transparent' },
+                            '51%, 100%': { borderColor: 'white' }
+                        },
+                        counter: {
+                            '0%': { transform: 'scale(0.5)', opacity: '0' },
+                            '50%': { transform: 'scale(1.1)' },
+                            '100%': { transform: 'scale(1)', opacity: '1' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+    /* Light theme variables */
+    --bg-primary: #f9fafb;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #f3f4f6;
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+    --text-tertiary: #9ca3af;
+    --border-primary: #e5e7eb;
+    --border-secondary: #d1d5db;
+    --shadow: rgba(0, 0, 0, 0.1);
+    --shadow-hover: rgba(0, 0, 0, 0.15);
+    --nav-bg: rgba(255, 255, 255, 0.95);
+    --card-bg: #ffffff;
+    --hover-bg: #f9fafb;
+}
+
+[data-theme="dark"] {
+    /* Dark theme variables */
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-tertiary: #334155;
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-tertiary: #94a3b8;
+    --border-primary: #334155;
+    --border-secondary: #475569;
+    --shadow: rgba(0, 0, 0, 0.3);
+    --shadow-hover: rgba(0, 0, 0, 0.4);
+    --nav-bg: rgba(30, 41, 59, 0.95);
+    --card-bg: #1e293b;
+    --hover-bg: #334155;
+}
+
+* {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+}
+.hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px var(--shadow-hover);
+}
+
+.gradient-text {
+    background: linear-gradient(45deg, #9146ff, #772ce8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.typing-animation {
+    overflow: hidden;
+    border-right: 2px solid white;
+    white-space: nowrap;
+    animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
+}
+
+.contribution-square {
+    transition: all 0.2s ease;
+}
+.contribution-square:hover {
+    transform: scale(1.2);
+    z-index: 10;
+}
+
+.stream-card {
+    transition: all 0.3s ease;
+    background-color: var(--bg-tertiary);
+}
+.stream-card:hover {
+    transform: translateX(10px);
+    background: linear-gradient(135deg, var(--hover-bg) 0%, var(--bg-tertiary) 100%);
+}
+
+.tech-badge {
+    transition: all 0.3s ease;
+}
+.tech-badge:hover {
+    transform: scale(1.05) rotate(2deg);
+}
+
+.live-indicator {
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+/* Theme Toggle Styles */
+.theme-toggle {
+    position: relative;
+    width: 60px;
+    height: 30px;
+    background: linear-gradient(45deg, #9146ff, #772ce8);
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    outline: none;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(145, 70, 255, 0.3);
+}
+
+.theme-toggle-slider {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 24px;
+    height: 24px;
+    background: white;
+    border-radius: 50%;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .theme-toggle-slider {
+    transform: translateX(30px);
+    background: #1e293b;
+    color: #fbbf24;
+}
+
+[data-theme="light"] .theme-toggle-slider {
+    color: #f59e0b;
+}
+
+.theme-toggle-icon {
+    transition: all 0.3s ease;
+}
+
+/* Card backgrounds */
+.card-bg {
+    background-color: var(--card-bg);
+    border-color: var(--border-primary);
+}
+
+.nav-bg {
+    background-color: var(--nav-bg);
+    backdrop-filter: blur(10px);
+    border-color: var(--border-primary);
+}
+
+.text-primary {
+    color: var(--text-primary);
+}
+
+.text-secondary {
+    color: var(--text-secondary);
+}
+
+.border-primary {
+    border-color: var(--border-primary);
+}
+
+/* Dark mode specific adjustments */
+[data-theme="dark"] .bg-gray-50 {
+    background-color: var(--bg-tertiary) !important;
+}
+
+[data-theme="dark"] .bg-white {
+    background-color: var(--card-bg) !important;
+}
+
+[data-theme="dark"] .text-gray-900 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .text-gray-600 {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .text-gray-500 {
+    color: var(--text-tertiary) !important;
+}
+
+[data-theme="dark"] .border-gray-200 {
+    border-color: var(--border-primary) !important;
+}
+
+[data-theme="dark"] .border-gray-100 {
+    border-color: var(--border-secondary) !important;
+}
+
+/* Tech badge dark mode colors */
+[data-theme="dark"] .bg-blue-50 {
+    background-color: rgba(59, 130, 246, 0.1) !important;
+}
+
+[data-theme="dark"] .bg-green-50 {
+    background-color: rgba(34, 197, 94, 0.1) !important;
+}
+
+[data-theme="dark"] .bg-purple-50 {
+    background-color: rgba(168, 85, 247, 0.1) !important;
+}
+
+[data-theme="dark"] .bg-yellow-50 {
+    background-color: rgba(251, 191, 36, 0.1) !important;
+}
+
+[data-theme="dark"] .bg-red-50 {
+    background-color: rgba(239, 68, 68, 0.1) !important;
+}
+
+[data-theme="dark"] .bg-orange-50 {
+    background-color: rgba(249, 115, 22, 0.1) !important;
+}
+
+[data-theme="dark"] .bg-gray-50 {
+    background-color: rgba(148, 163, 184, 0.1) !important;
+}
+
+[data-theme="dark"] .bg-indigo-50 {
+    background-color: rgba(99, 102, 241, 0.1) !important;
+}
+
+/* Hover states for dark mode */
+[data-theme="dark"] .hover\:bg-gray-100:hover {
+    background-color: var(--hover-bg) !important;
+}
+
+[data-theme="dark"] .hover\:bg-purple-100:hover {
+    background-color: rgba(168, 85, 247, 0.2) !important;
+}
+
+[data-theme="dark"] .hover\:bg-blue-100:hover {
+    background-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+@keyframes slideInStagger {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.stagger-animation {
+    animation: slideInStagger 0.6s ease-out forwards;
+}
+
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+
+.loading-bar {
+    height: 4px;
+    background: linear-gradient(90deg, #9146ff, #772ce8);
+    animation: loading 2s ease-in-out infinite;
+}
+
+@keyframes loading {
+    0%, 100% { transform: scaleX(0); }
+    50% { transform: scaleX(1); }
+}
+
+/* Smooth theme transition */
+.theme-transition {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Loading Bar -->
+    <div class="loading-bar fixed top-0 left-0 w-full z-50"></div>
+    
+    <!-- Navigation -->
+    <nav class="nav-bg border-b border-primary sticky top-0 z-40 animate-slide-up theme-transition">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2 animate-float">
+                    <i class="fas fa-code text-stream-purple text-xl"></i>
+                    <span class="font-bold text-xl gradient-text">CodeStream</span>
+                </div>
+            </div>
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="#" class="text-secondary hover:text-primary transition-all duration-300 hover:scale-105">Home</a>
+                <a href="#" class="text-secondary hover:text-primary transition-all duration-300 hover:scale-105">Streams</a>
+                <a href="#" class="text-secondary hover:text-primary transition-all duration-300 hover:scale-105">Projects</a>
+                <a href="#" class="text-secondary hover:text-primary transition-all duration-300 hover:scale-105">Community</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+                    <div class="theme-toggle-slider">
+                        <i class="theme-toggle-icon fas fa-sun"></i>
+                    </div>
+                </button>
+                <button class="md:hidden">
+                    <i class="fas fa-bars text-secondary"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+    <!-- Profile Header -->
+    <div class="bg-gradient-to-r from-stream-purple to-stream-purple-dark animate-fade-in">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6">
+                <div class="relative animate-slide-in-left">
+                    <img src="https://media.istockphoto.com/id/1306922705/vector/live-stream-banner.jpg?s=612x612&w=0&k=20&c=NDDXT2Ftq-C-VyytMsHWgHCrcJ2d0I_pHEFz1hsw2wQ=" alt="Alex Chen" class="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-white shadow-lg hover:scale-105 transition-transform duration-300">
+                    <div class="absolute -bottom-1 -right-1 w-8 h-8 bg-green-500 rounded-full border-4 border-white flex items-center justify-center live-indicator">
+                        <div class="w-3 h-3 bg-white rounded-full animate-pulse"></div>
+                    </div>
+                </div>
+                <div class="flex-1 text-white animate-slide-in-right">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <h1 class="text-3xl md:text-4xl font-bold animate-fade-in">Alex Chen</h1>
+                            <p class="text-lg opacity-90 mt-1 animate-fade-in" style="animation-delay: 0.2s;">@alexcodes</p>
+                            <div class="flex items-center space-x-4 mt-2">
+                                <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center animate-bounce-slow">
+                                    <div class="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></div>
+                                    LIVE
+                                </span>
+                                <span class="text-sm opacity-75 typing-animation">Building a React Dashboard</span>
+                            </div>
+                        </div>
+                        <div class="flex space-x-3 mt-4 sm:mt-0">
+                            <button class="bg-white text-stream-purple px-6 py-2 rounded-lg font-medium hover:bg-gray-100 transition-all duration-300 hover:scale-105 hover:shadow-lg transform">
+                                <i class="fas fa-heart mr-2 animate-pulse"></i>Follow
+                            </button>
+                            <button class="bg-stream-purple-dark text-white px-6 py-2 rounded-lg font-medium hover:bg-opacity-80 transition-all duration-300 hover:scale-105 hover:shadow-lg transform">
+                                <i class="fas fa-bell mr-2"></i>Subscribe
+                            </button>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-lg opacity-90 max-w-2xl animate-fade-in" style="animation-delay: 0.4s;">
+                        Full-stack developer streaming web development, algorithms, and system design. 
+                        Building cool projects and teaching along the way! 🚀
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="card-bg border-b border-primary animate-slide-up theme-transition">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="text-center stagger-animation stagger-1 hover-lift">
+                <div class="text-2xl font-bold text-primary animate-counter" data-target="24500">0</div>
+                <div class="text-sm text-secondary">Followers</div>
+            </div>
+            <div class="text-center stagger-animation stagger-2 hover-lift">
+                <div class="text-2xl font-bold text-primary animate-counter" data-target="1200">0</div>
+                <div class="text-sm text-secondary">Subscribers</div>
+            </div>
+            <div class="text-center stagger-animation stagger-3 hover-lift">
+                <div class="text-2xl font-bold text-primary animate-counter" data-target="156">0</div>
+                <div class="text-sm text-secondary">Repositories</div>
+            </div>
+            <div class="text-center stagger-animation stagger-4 hover-lift">
+                <div class="text-2xl font-bold text-primary animate-counter" data-target="892">0</div>
+                <div class="text-sm text-secondary">Hours Streamed</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Left Column -->
+        <div class="lg:col-span-2 space-y-8">
+            <!-- Recent Streams -->
+            <div class="card-bg rounded-xl shadow-sm border-primary p-6 hover-lift animate-fade-in theme-transition">
+                <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+                    <i class="fas fa-video text-stream-purple mr-2 animate-pulse-slow"></i>
+                    Recent Streams
+                </h2>
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-4 p-4 stream-card rounded-lg cursor-pointer theme-transition">
+                        <img src="https://media.istockphoto.com/id/1306922705/vector/live-stream-banner.jpg?s=612x612&w=0&k=20&c=NDDXT2Ftq-C-VyytMsHWgHCrcJ2d0I_pHEFz1hsw2wQ=" alt="Stream thumbnail" class="w-20 h-12 rounded object-cover hover:scale-105 transition-transform duration-300">
+                        <div class="flex-1">
+                            <h3 class="font-medium text-primary">Building a Real-time Chat App with Socket.io</h3>
+                            <p class="text-sm text-secondary mt-1">2 hours ago • 1.2K viewers • 45 min</p>
+                            <div class="flex items-center space-x-2 mt-2">
+                                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs tech-badge">React</span>
+                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs tech-badge">Node.js</span>
+                                <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs tech-badge">Socket.io</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <i class="fas fa-play text-stream-purple text-xl hover:scale-125 transition-transform duration-300"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4 p-4 stream-card rounded-lg cursor-pointer theme-transition">
+                        <img src="https://preview.redd.it/i-have-been-leetcoding-for-a-while-but-what-does-the-v0-ucy9q7w40wtc1.jpg?width=720&format=pjpg&auto=webp&s=41e11a55faf86e0b7bbbddf934b906212caa0fa9" alt="Stream thumbnail" class="w-20 h-12 rounded object-cover hover:scale-105 transition-transform duration-300">
+                        <div class="flex-1">
+                            <h3 class="font-medium text-primary">LeetCode Daily Challenge & Algorithm Explanation</h3>
+                            <p class="text-sm text-secondary mt-1">1 day ago • 856 viewers • 1h 20min</p>
+                            <div class="flex items-center space-x-2 mt-2">
+                                <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs tech-badge">Algorithms</span>
+                                <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs tech-badge">Python</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <i class="fas fa-play text-stream-purple text-xl hover:scale-125 transition-transform duration-300"></i>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center space-x-4 p-4 stream-card rounded-lg cursor-pointer theme-transition">
+                        <img src="https://img.freepik.com/premium-vector/setting-system-logo-design-icon-bass_766448-66.jpg" alt="Stream thumbnail" class="w-20 h-12 rounded object-cover hover:scale-105 transition-transform duration-300">
+                        <div class="flex-1">
+                            <h3 class="font-medium text-primary">System Design: Designing Instagram</h3>
+                            <p class="text-sm text-secondary mt-1">3 days ago • 2.1K viewers • 2h 15min</p>
+                            <div class="flex items-center space-x-2 mt-2">
+                                <span class="bg-indigo-100 text-indigo-800 px-2 py-1 rounded text-xs tech-badge">System Design</span>
+                                <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs tech-badge">Architecture</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <i class="fas fa-play text-stream-purple text-xl hover:scale-125 transition-transform duration-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contribution Activity -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover-lift animate-fade-in" style="animation-delay: 0.2s;">
+  <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+    <i class="fab fa-github text-gray-700 mr-2 animate-float"></i>
+    Coding Activity
+  </h2>
+  <div class="mb-4">
+    <p class="text-sm text-gray-600 mb-3">GitHub contributions in the last year</p>
+    <div class="overflow-x-auto">
+      <img src="https://ghchart.rshah.org/AtharvaManjrekar" alt="GitHub contributions chart" class="w-full max-w-full h-auto" />
+    </div>
+  </div>
+                </div>
+
+            <!-- Recent Projects -->
+            <div class="card-bg rounded-xl shadow-sm border-primary p-6 hover-lift animate-fade-in theme-transition" style="animation-delay: 0.4s;">
+                <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+                    <i class="fas fa-folder text-secondary mr-2 animate-float"></i>
+                    Recent Projects
+                </h2>
+                <div class="space-y-4">
+                    <div class="border border-primary rounded-lg p-4 hover:border-secondary transition-all duration-300 hover:shadow-md transform hover:-translate-y-1 theme-transition">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="font-medium text-primary flex items-center">
+                                    <i class="fas fa-book text-blue-500 mr-2 animate-pulse-slow"></i>
+                                    react-dashboard-template
+                                </h3>
+                                <p class="text-sm text-secondary mt-1">A modern React dashboard template with TypeScript and Tailwind CSS</p>
+                                <div class="flex items-center space-x-4 mt-3 text-sm text-tertiary">
+                                    <span class="flex items-center hover:scale-105 transition-transform duration-200">
+                                        <div class="w-3 h-3 bg-blue-500 rounded-full mr-1"></div>
+                                        TypeScript
+                                    </span>
+                                    <span class="flex items-center hover:scale-105 transition-transform duration-200">
+                                        <i class="fas fa-star mr-1 text-yellow-500"></i>
+                                        234
+                                    </span>
+                                    <span class="flex items-center hover:scale-105 transition-transform duration-200">
+                                        <i class="fas fa-code-branch mr-1"></i>
+                                        45
+                                    </span>
+                                    <span>Updated 2 days ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-primary rounded-lg p-4 hover:border-secondary transition-all duration-300 hover:shadow-md transform hover:-translate-y-1 theme-transition">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="font-medium text-primary flex items-center">
+                                    <i class="fas fa-book text-yellow-500 mr-2 animate-pulse-slow"></i>
+                                    algorithm-visualizer
+                                </h3>
+                                <p class="text-sm text-secondary mt-1">Interactive algorithm visualization tool built with React and D3.js</p>
+                                <div class="flex items-center space-x-4 mt-3 text-sm text-tertiary">
+                                    <span class="flex items-center hover:scale-105 transition-transform duration-200">
+                                        <div class="w-3 h-3 bg-yellow-500 rounded-full mr-1"></div>
+                                        JavaScript
+                                    </span>
+                                    <span class="flex items-center hover:scale-105 transition-transform duration-200">
+                                        <i class="fas fa-star mr-1 text-yellow-500"></i>
+                                        567
+                                    </span>
+                                    <span class="flex items-center hover:scale-105 transition-transform duration-200">
+                                        <i class="fas fa-code-branch mr-1"></i>
+                                        89
+                                    </span>
+                                    <span>Updated 5 days ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar -->
+        <div class="space-y-6">
+            <!-- Stream Schedule -->
+            <div class="card-bg rounded-xl shadow-sm border-primary p-6 hover-lift animate-slide-in-right theme-transition">
+                <h3 class="text-lg font-bold text-primary mb-4 flex items-center">
+                    <i class="fas fa-calendar text-stream-purple mr-2 animate-bounce-slow"></i>
+                    Stream Schedule
+                </h3>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between py-2 border-b border-secondary hover:bg-tertiary transition-colors duration-200 rounded px-2">
+                        <span class="text-sm font-medium text-primary">Monday</span>
+                        <span class="text-sm text-secondary">7:00 PM - 10:00 PM</span>
+                    </div>
+                    <div class="flex items-center justify-between py-2 border-b border-secondary hover:bg-tertiary transition-colors duration-200 rounded px-2">
+                        <span class="text-sm font-medium text-primary">Wednesday</span>
+                        <span class="text-sm text-secondary">7:00 PM - 9:00 PM</span>
+                    </div>
+                    <div class="flex items-center justify-between py-2 border-b border-secondary hover:bg-tertiary transition-colors duration-200 rounded px-2">
+                        <span class="text-sm font-medium text-primary">Friday</span>
+                        <span class="text-sm text-secondary">8:00 PM - 11:00 PM</span>
+                    </div>
+                    <div class="flex items-center justify-between py-2 hover:bg-tertiary transition-colors duration-200 rounded px-2">
+                        <span class="text-sm font-medium text-primary">Saturday</span>
+                        <span class="text-sm text-secondary">2:00 PM - 6:00 PM</span>
+                    </div>
+                </div>
+                <p class="text-xs text-tertiary mt-4">All times in PST</p>
+            </div>
+
+            <!-- Tech Stack -->
+            <div class="card-bg rounded-xl shadow-sm border-primary p-6 hover-lift animate-slide-in-right theme-transition" style="animation-delay: 0.2s;">
+                <h3 class="text-lg font-bold text-primary mb-4 flex items-center">
+                    <i class="fas fa-code text-secondary mr-2 animate-float"></i>
+                    Tech Stack
+                </h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="flex items-center space-x-2 p-2 bg-blue-50 rounded-lg tech-badge cursor-pointer theme-transition">
+                        <i class="fab fa-react text-blue-500 animate-pulse-slow"></i>
+                        <span class="text-sm font-medium text-primary">React</span>
+                    </div>
+                    <div class="flex items-center space-x-2 p-2 bg-green-50 rounded-lg tech-badge cursor-pointer theme-transition">
+                        <i class="fab fa-node-js text-green-500 animate-pulse-slow"></i>
+                        <span class="text-sm font-medium text-primary">Node.js</span>
+                    </div>
+                    <div class="flex items-center space-x-2 p-2 bg-blue-50 rounded-lg tech-badge cursor-pointer theme-transition">
+                        <i class="fab fa-python text-blue-600 animate-pulse-slow"></i>
+                        <span class="text-sm font-medium text-primary">Python</span>
+                    </div>
+                    <div class="flex items-center space-x-2 p-2 bg-gray-50 rounded-lg tech-badge cursor-pointer theme-transition">
+                        <i class="fas fa-database text-gray-600 animate-pulse-slow"></i>
+                        <span class="text-sm font-medium text-primary">MongoDB</span>
+                    </div>
+                    <div class="flex items-center space-x-2 p-2 bg-orange-50 rounded-lg tech-badge cursor-pointer theme-transition">
+                        <i class="fab fa-aws text-orange-500 animate-pulse-slow"></i>
+                        <span class="text-sm font-medium text-primary">AWS</span>
+                    </div>
+                    <div class="flex items-center space-x-2 p-2 bg-purple-50 rounded-lg tech-badge cursor-pointer theme-transition">
+                        <i class="fab fa-docker text-purple-500 animate-pulse-slow"></i>
+                        <span class="text-sm font-medium text-primary">Docker</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Links -->
+            <div class="card-bg rounded-xl shadow-sm border-primary p-6 hover-lift animate-slide-in-right theme-transition" style="animation-delay: 0.4s;">
+                <h3 class="text-lg font-bold text-primary mb-4">Connect</h3>
+                <div class="space-y-3">
+                    <a href="#" class="flex items-center space-x-3 p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-all duration-300 transform hover:scale-105 hover:shadow-md theme-transition">
+                        <i class="fab fa-twitch text-purple-600 animate-pulse-slow"></i>
+                        <span class="text-sm font-medium text-primary">Twitch</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 hover:shadow-md theme-transition">
+                        <i class="fab fa-github text-gray-700 animate-pulse-slow"></i>
+                        <span class="text-sm font-medium text-primary">GitHub</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-all duration-300 transform hover:scale-105 hover:shadow-md theme-transition">
+                        <i class="fab fa-twitter text-blue-500 animate-pulse-slow"></i>
+                        <span class="text-sm font-medium text-primary">Twitter</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-all duration-300 transform hover:scale-105 hover:shadow-md theme-transition">
+                        <i class="fab fa-linkedin text-blue-600 animate-pulse-slow"></i>
+                        <span class="text-sm font-medium text-primary">LinkedIn</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="card-bg rounded-xl shadow-sm border-primary p-6 hover-lift animate-slide-in-right theme-transition" style="animation-delay: 0.6s;">
+                <h3 class="text-lg font-bold text-primary mb-4">Recent Activity</h3>
+                <div class="space-y-3">
+                    <div class="flex items-start space-x-3 hover:bg-tertiary p-2 rounded transition-colors duration-200">
+                        <div class="w-2 h-2 bg-green-500 rounded-full mt-2 animate-pulse"></div>
+                        <div>
+                            <p class="text-sm text-primary">Pushed to <span class="font-medium">react-dashboard</span></p>
+                            <p class="text-xs text-tertiary">2 hours ago</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3 hover:bg-tertiary p-2 rounded transition-colors duration-200">
+                        <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 animate-pulse"></div>
+                        <div>
+                            <p class="text-sm text-primary">Started streaming</p>
+                            <p class="text-xs text-tertiary">3 hours ago</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3 hover:bg-tertiary p-2 rounded transition-colors duration-200">
+                        <div class="w-2 h-2 bg-purple-500 rounded-full mt-2 animate-pulse"></div>
+                        <div>
+                            <p class="text-sm text-primary">Created new repository</p>
+                            <p class="text-xs text-tertiary">1 day ago</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Footer -->
+    <footer class="card-bg border-t border-primary mt-16 animate-fade-in theme-transition">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="text-center text-secondary">
+                <p>&copy; 2024 CodeStream. Built with ❤️ for the coding community.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+// Theme Management
+class ThemeManager {
+    constructor() {
+        this.theme = localStorage.getItem('theme') || 'light';
+        this.init();
+    }
+
+    init() {
+        this.applyTheme();
+        this.setupToggle();
+        this.updateToggleIcon();
+    }
+
+    applyTheme() {
+        document.documentElement.setAttribute('data-theme', this.theme);
+        localStorage.setItem('theme', this.theme);
+    }
+
+    toggleTheme() {
+        this.theme = this.theme === 'light' ? 'dark' : 'light';
+        this.applyTheme();
+        this.updateToggleIcon();
+        this.animateThemeChange();
+    }
+
+    updateToggleIcon() {
+        const icon = document.querySelector('.theme-toggle-icon');
+        if (icon) {
+            icon.className = `theme-toggle-icon fas ${this.theme === 'light' ? 'fa-sun' : 'fa-moon'}`;
+        }
+    }
+
+    animateThemeChange() {
+        // Add a subtle animation when theme changes
+        document.body.style.transition = 'all 0.3s ease';
+        setTimeout(() => {
+            document.body.style.transition = '';
+        }, 300);
+    }
+
+    setupToggle() {
+        const toggle = document.getElementById('themeToggle');
+        if (toggle) {
+            toggle.addEventListener('click', () => this.toggleTheme());
+        }
+    }
+}
+
+// Animated counter for stats
+function animateCounter(element, target) {
+    let current = 0;
+    const increment = target / 100;
+    const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+            element.textContent = target.toLocaleString();
+            clearInterval(timer);
+        } else {
+            element.textContent = Math.floor(current).toLocaleString();
+        }
+    }, 20);
+}
+
+// Initialize everything when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize theme manager
+    new ThemeManager();
+
+    // Initialize counters
+    const counters = document.querySelectorAll('[data-target]');
+    
+    // Intersection Observer for counter animation
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const target = parseInt(entry.target.getAttribute('data-target'));
+                animateCounter(entry.target, target);
+                observer.unobserve(entry.target);
+            }
+        });
+    });
+
+    counters.forEach(counter => {
+        observer.observe(counter);
+    });
+
+    // Remove loading bar after page loads
+    setTimeout(() => {
+        const loadingBar = document.querySelector('.loading-bar');
+        if (loadingBar) {
+            loadingBar.style.display = 'none';
+        }
+    }, 2000);
+
+    // Add scroll-triggered animations
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const scrollObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+
+    // Observe elements for scroll animations
+    const animatedElements = document.querySelectorAll('.animate-fade-in, .animate-slide-up, .animate-slide-in-left, .animate-slide-in-right');
+    animatedElements.forEach(el => {
+        scrollObserver.observe(el);
+    });
+
+    // Add keyboard support for theme toggle
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 't' && (e.ctrlKey || e.metaKey)) {
+            e.preventDefault();
+            document.getElementById('themeToggle').click();
+        }
+    });
+});
+    </script>
+</body>
+</html>
